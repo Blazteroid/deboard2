@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deboard - Dashboard Monitoring Sistem Operasi</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+</head>
+<body>
+
+<div class="layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">M</div>
+      <span>Deboard</span>
+    </div>
+    <nav>
+      <a href="#" class="nav-item active"><span class="icon">🏠</span> Dashboard</a>
+      <a href="#" class="nav-item"><span class="icon">📈</span> Monitoring</a>
+      <a href="#" class="nav-item"><span class="icon">📄</span> Logs</a>
+      <a href="#" class="nav-item"><span class="icon">⚙️</span> Settings</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="brand-icon small">M</div>
+      <div>
+        <div>Monitoring System</div>
+        <div class="muted">v1.0.0</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+    <header class="topbar">
+      <div class="topbar-left">
+        <span class="pulse"></span>
+        <span>System Online</span>
+      </div>
+      <div class="topbar-right">
+        <span id="datetime">--</span>
+        <span class="bell">🔔</span>
+        <span class="avatar">👤</span>
+      </div>
+    </header>
+
+    <section class="page-header">
+      <div class="page-title">
+        <div class="page-icon">🖥️</div>
+        <div>
+          <h1>Dashboard Monitoring</h1>
+          <p id="os-label">Sistem Operasi (Debian)</p>
+        </div>
+      </div>
+      <div class="server-status">
+        <span class="dot green"></span> Server Aktif <span class="mini-wave">〰️</span>
+      </div>
+    </section>
+
+    <!-- Cards -->
+    <section class="cards-grid">
+      <div class="card border-red">
+        <div class="card-header">
+          <span class="card-icon red">🧠</span>
+          <h3>Memory</h3>
+        </div>
+        <div class="legend">
+          <span><i class="dot-red"></i> Used</span>
+          <span><i class="dot-pink"></i> Free</span>
+        </div>
+        <div class="donut-wrap">
+          <canvas id="memoryChart"></canvas>
+          <div class="donut-center">
+            <div id="memoryPercent" class="donut-value">0%</div>
+            <div class="donut-label">Terpakai</div>
+          </div>
+        </div>
+        <div class="card-footer red">
+          <span class="footer-icon">🧠</span>
+          <div>
+            <div id="memoryDetail">0 GB / 0 GB</div>
+            <div id="memoryPercentSmall" class="muted">(0%)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card border-blue">
+        <div class="card-header">
+          <span class="card-icon blue">⚙️</span>
+          <h3>CPU</h3>
+        </div>
+        <div class="legend">
+          <span><i class="dot-blue"></i> Used</span>
+          <span><i class="dot-lightblue"></i> Idle</span>
+        </div>
+        <div class="donut-wrap">
+          <canvas id="cpuChart"></canvas>
+          <div class="donut-center">
+            <div id="cpuPercent" class="donut-value">0%</div>
+            <div class="donut-label">Terpakai</div>
+          </div>
+        </div>
+        <div class="card-footer blue">
+          <span class="footer-icon">⚙️</span>
+          <div>
+            <div id="cpuDetail">0% used | 0 cores</div>
+            <div id="cpuLoad" class="muted">Load avg: 0</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card border-green">
+        <div class="card-header">
+          <span class="card-icon green">💾</span>
+          <h3>Disk</h3>
+        </div>
+        <div class="legend">
+          <span><i class="dot-green"></i> Used</span>
+          <span><i class="dot-lightblue"></i> Free</span>
+        </div>
+        <div class="donut-wrap">
+          <canvas id="diskChart"></canvas>
+          <div class="donut-center">
+            <div id="diskPercent" class="donut-value">0%</div>
+            <div class="donut-label">Terpakai</div>
+          </div>
+        </div>
+        <div class="card-footer green">
+          <span class="footer-icon">💾</span>
+          <div>
+            <div id="diskDetail">0 GB / 0 GB</div>
+            <div id="diskPercentSmall" class="muted">(0%)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card processes-card">
+        <div class="card-header">
+          <span class="card-icon purple">📋</span>
+          <h3>Top Proses (I/O)</h3>
+        </div>
+        <table class="process-table">
+          <thead>
+            <tr><th>PID</th><th>Nama</th><th>Read</th><th>Write</th></tr>
+          </thead>
+          <tbody id="processTableBody">
+            <tr><td colspan="4" class="muted">Memuat...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Summary -->
+    <section class="summary-card">
+      <div class="summary-header">
+        <div class="page-title">
+          <span class="page-icon small">📈</span>
+          <h3>Ringkasan Sistem</h3>
+        </div>
+        <div class="range-buttons">
+          <button class="range-btn active" data-range="1h">1 Jam</button>
+          <button class="range-btn" data-range="6h">6 Jam</button>
+          <button class="range-btn" data-range="12h">12 Jam</button>
+          <button class="range-btn" data-range="24h">24 Jam</button>
+        </div>
+      </div>
+
+      <div class="summary-mini-grid">
+        <div class="mini-card">
+          <span class="footer-icon red">🧠</span>
+          <div>
+            <div class="mini-label">Memory</div>
+            <div id="miniMemory" class="mini-value">0%</div>
+            <div class="muted">Terpakai</div>
+          </div>
+        </div>
+        <div class="mini-card">
+          <span class="footer-icon blue">⚙️</span>
+          <div>
+            <div class="mini-label">CPU</div>
+            <div id="miniCpu" class="mini-value">0%</div>
+            <div class="muted">Terpakai</div>
+          </div>
+        </div>
+        <div class="mini-card">
+          <span class="footer-icon green">💾</span>
+          <div>
+            <div class="mini-label">Disk</div>
+            <div id="miniDisk" class="mini-value">0%</div>
+            <div class="muted">Terpakai</div>
+          </div>
+        </div>
+        <div class="mini-card">
+          <span class="footer-icon purple">⏱️</span>
+          <div>
+            <div class="mini-label">Uptime</div>
+            <div id="miniUptime" class="mini-value">-</div>
+            <div class="muted">Normal</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chart-wrap">
+        <canvas id="historyChart"></canvas>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>
