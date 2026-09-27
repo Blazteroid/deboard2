@@ -7,7 +7,7 @@ dari `/proc` dan `/sys` melalui `psutil`.
 
 ```bash
 # 1. Masuk ke folder project
-cd deboard
+cd deboard2
 
 # 2. Buat virtual environment (opsional tapi disarankan)
 python3 -m venv venv
